@@ -34,3 +34,6 @@ word2number==1.1
 pytest==8.3.2
 pytest-asyncio==0.23.8
 anyio==4.4.0
+
+# Supabase Client
+supabase>=2.5.0

@@ -1,23 +1,25 @@
 """
-job_store.py — In-memory job registry with disk checkpointing.
+job_store.py — Supabase-backed job registry.
 
-Each BenchmarkJob lives in RAM for fast access. After every question result is
-added the job is snapshotted to <REPORTS_DIR>/<job_id>/job.json so it survives
-backend restarts.
+Each BenchmarkJob is persisted in a Supabase PostgreSQL database.
+Local execution state (pause/cancel) is held in memory for now.
 """
 from __future__ import annotations
 
 import asyncio
-import json
 import threading
 import uuid
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
-from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional
+
+from supabase import create_client, Client
 
 from backend.config import settings
 
+# ─── Supabase Client ──────────────────────────────────────────────────────────
+
+supabase: Client = create_client(settings.SUPABASE_URL, settings.SUPABASE_KEY)
 
 # ─── Sub-models ───────────────────────────────────────────────────────────────
 
@@ -41,7 +43,6 @@ class QuestionResult:
     avg_cpu_percent: float
     error: Optional[str] = None   # populated if the call failed
 
-
 @dataclass
 class JobProgress:
     current_model: str = ""
@@ -59,9 +60,7 @@ class JobProgress:
         done = self.models_done * self.total_questions_per_model + self.current_question_idx
         return min(100.0, done / total * 100)
 
-
 JobStatus = Literal["queued", "running", "paused", "done", "cancelled", "error"]
-
 
 @dataclass
 class BenchmarkJob:
@@ -77,139 +76,189 @@ class BenchmarkJob:
     )
     completed_at: Optional[str] = None
 
-    # ── Runtime-only (not persisted) ──────────────────────────────────────────
-    # asyncio.Event — set=running, clear=paused
-    _pause_event: Any = field(default=None, compare=False, repr=False)
-    _cancel_flag: bool = field(default=False, compare=False, repr=False)
+# ─── Runtime State ────────────────────────────────────────────────────────────
+
+@dataclass
+class RuntimeJobState:
+    pause_event: Optional[asyncio.Event] = None
+    cancel_flag: bool = False
 
     def __post_init__(self):
-        if self._pause_event is None:
+        if self.pause_event is None:
             try:
-                self._pause_event = asyncio.Event()
-                self._pause_event.set()   # start in running state
+                self.pause_event = asyncio.Event()
+                self.pause_event.set()
             except RuntimeError:
-                # No event loop yet (happens in tests); set lazily in runner
-                self._pause_event = None
-
-    # ── Pause / Resume / Cancel helpers ───────────────────────────────────────
-
-    def pause(self):
-        if self._pause_event:
-            self._pause_event.clear()
-
-    def resume(self):
-        if self._pause_event:
-            self._pause_event.set()
-
-    def cancel(self):
-        self._cancel_flag = True
-        self.resume()   # unblock any waiting coroutines
-
-    async def wait_if_paused(self):
-        """Await this inside the runner before each question."""
-        if self._pause_event:
-            await self._pause_event.wait()
-
-    @property
-    def is_cancelled(self) -> bool:
-        return self._cancel_flag
-
+                self.pause_event = None
 
 # ─── Store ────────────────────────────────────────────────────────────────────
 
 class JobStore:
     """
-    Thread-safe in-memory store for BenchmarkJob objects.
-    Uses a reentrant lock so the async runner (via run_in_executor or
-    asyncio.create_task) and the FastAPI request handlers can both access it
-    safely.
+    Supabase-backed store for BenchmarkJob objects.
+    Maintains a local dict of RuntimeJobStates to manage pause/cancel events
+    for jobs actively running in the current process.
     """
 
     def __init__(self):
-        self._jobs: Dict[str, BenchmarkJob] = {}
+        self._runtime_states: Dict[str, RuntimeJobState] = {}
         self._lock = threading.RLock()
 
-    # ── CRUD ──────────────────────────────────────────────────────────────────
+    def _get_runtime_state(self, job_id: str) -> RuntimeJobState:
+        with self._lock:
+            if job_id not in self._runtime_states:
+                self._runtime_states[job_id] = RuntimeJobState()
+            return self._runtime_states[job_id]
 
     def create(self, models: List[str], suite: str) -> BenchmarkJob:
-        job = BenchmarkJob(
-            job_id=str(uuid.uuid4()),
+        job_id = str(uuid.uuid4())
+        created_at = datetime.now(timezone.utc).isoformat()
+        
+        # Insert into Supabase
+        data = {
+            "job_id": job_id,
+            "models": models,
+            "suite": suite,
+            "status": "queued",
+            "progress": asdict(JobProgress()),
+            "created_at": created_at,
+        }
+        supabase.table("benchmark_jobs").insert(data).execute()
+        
+        # Initialize runtime state locally
+        self._get_runtime_state(job_id)
+        
+        return BenchmarkJob(
+            job_id=job_id,
             models=models,
             suite=suite,
+            created_at=created_at
         )
-        with self._lock:
-            self._jobs[job.job_id] = job
-        return job
 
     def get(self, job_id: str) -> Optional[BenchmarkJob]:
-        with self._lock:
-            return self._jobs.get(job_id)
+        # Fetch job from Supabase
+        response = supabase.table("benchmark_jobs").select("*").eq("job_id", job_id).execute()
+        if not response.data:
+            return None
+        job_data = response.data[0]
+        
+        # Fetch results
+        results_response = supabase.table("question_results").select("*").eq("job_id", job_id).execute()
+        results = [QuestionResult(**{k: v for k, v in r.items() if k != 'id' and k != 'job_id'}) for r in results_response.data]
+        
+        prog_data = job_data.get("progress", {})
+        progress = JobProgress(**prog_data)
+        
+        return BenchmarkJob(
+            job_id=job_data["job_id"],
+            models=job_data.get("models", []),
+            suite=job_data.get("suite", ""),
+            status=job_data.get("status", "done"),
+            results=results,
+            progress=progress,
+            error_message=job_data.get("error_message"),
+            created_at=job_data.get("created_at", ""),
+            completed_at=job_data.get("completed_at"),
+        )
 
     def get_all(self) -> List[BenchmarkJob]:
-        with self._lock:
-            return list(self._jobs.values())
+        response = supabase.table("benchmark_jobs").select("*").order("created_at", desc=True).execute()
+        jobs = []
+        for job_data in response.data:
+            job_id = job_data["job_id"]
+            results_response = supabase.table("question_results").select("*").eq("job_id", job_id).execute()
+            results = [QuestionResult(**{k: v for k, v in r.items() if k != 'id' and k != 'job_id'}) for r in results_response.data]
+            
+            prog_data = job_data.get("progress", {})
+            progress = JobProgress(**prog_data)
+            
+            jobs.append(BenchmarkJob(
+                job_id=job_data["job_id"],
+                models=job_data.get("models", []),
+                suite=job_data.get("suite", ""),
+                status=job_data.get("status", "done"),
+                results=results,
+                progress=progress,
+                error_message=job_data.get("error_message"),
+                created_at=job_data.get("created_at", ""),
+                completed_at=job_data.get("completed_at"),
+            ))
+        return jobs
 
     def update_status(self, job_id: str, status: JobStatus, error: str = "") -> None:
-        with self._lock:
-            job = self._jobs.get(job_id)
-            if job:
-                job.status = status
-                if error:
-                    job.error_message = error
-                if status in ("done", "cancelled", "error"):
-                    job.completed_at = datetime.now(timezone.utc).isoformat()
+        update_data = {"status": status}
+        if error:
+            update_data["error_message"] = error
+        if status in ("done", "cancelled", "error"):
+            update_data["completed_at"] = datetime.now(timezone.utc).isoformat()
+            
+        supabase.table("benchmark_jobs").update(update_data).eq("job_id", job_id).execute()
 
     def add_result(self, job_id: str, result: QuestionResult) -> None:
-        with self._lock:
-            job = self._jobs.get(job_id)
-            if job:
-                job.results.append(result)
+        data = asdict(result)
+        data["job_id"] = job_id
+        supabase.table("question_results").insert(data).execute()
 
     def update_progress(self, job_id: str, **kwargs) -> None:
-        with self._lock:
-            job = self._jobs.get(job_id)
-            if job:
-                for k, v in kwargs.items():
-                    if hasattr(job.progress, k):
-                        setattr(job.progress, k, v)
-
-    # ── Persistence ───────────────────────────────────────────────────────────
+        # We need to fetch the current progress, update it, and save it
+        response = supabase.table("benchmark_jobs").select("progress").eq("job_id", job_id).execute()
+        if not response.data:
+            return
+            
+        prog_data = response.data[0].get("progress", {})
+        for k, v in kwargs.items():
+            prog_data[k] = v
+            
+        supabase.table("benchmark_jobs").update({"progress": prog_data}).eq("job_id", job_id).execute()
 
     def save_to_disk(self, job_id: str) -> None:
-        """Serialise the job (without asyncio fields) to JSON."""
-        with self._lock:
-            job = self._jobs.get(job_id)
-            if not job:
-                return
-            data = _serialise_job(job)
-
-        job_dir = settings.REPORTS_DIR / job_id
-        job_dir.mkdir(parents=True, exist_ok=True)
-        path = job_dir / "job.json"
-        try:
-            path.write_text(json.dumps(data, indent=2), encoding="utf-8")
-        except Exception:
-            pass  # Non-fatal — don't crash the runner
+        # No-op since we write to DB directly
+        pass
 
     def load_from_disk(self, job_id: str) -> Optional[BenchmarkJob]:
-        """Restore a job snapshot. Useful after backend restart."""
-        path = settings.REPORTS_DIR / job_id / "job.json"
-        if not path.exists():
-            return None
-        try:
-            data = json.loads(path.read_text(encoding="utf-8"))
-            job = _deserialise_job(data)
-            with self._lock:
-                self._jobs[job_id] = job
-            return job
-        except Exception:
-            return None
+        # Legacy compat, just map to get
+        return self.get(job_id)
 
+    # ── Pause / Resume / Cancel logic (Local to the running process) ────────
+    
+    def pause(self, job_id: str):
+        state = self._get_runtime_state(job_id)
+        if state.pause_event:
+            state.pause_event.clear()
+        self.update_status(job_id, "paused")
 
-# ─── Serialisation helpers ────────────────────────────────────────────────────
+    def resume(self, job_id: str):
+        state = self._get_runtime_state(job_id)
+        if state.pause_event:
+            state.pause_event.set()
+        self.update_status(job_id, "running")
 
-def _serialise_job(job: BenchmarkJob) -> dict:
-    """Convert a BenchmarkJob to a plain dict (strips asyncio fields)."""
+    def cancel(self, job_id: str):
+        state = self._get_runtime_state(job_id)
+        state.cancel_flag = True
+        if state.pause_event:
+            state.pause_event.set() # Unblock
+
+    async def wait_if_paused(self, job_id: str):
+        state = self._get_runtime_state(job_id)
+        # Handle case where event loop wasn't ready during __post_init__
+        if state.pause_event is None:
+            state.pause_event = asyncio.Event()
+            state.pause_event.set()
+            # If job in DB is already paused, we should clear it
+            job = self.get(job_id)
+            if job and job.status == "paused":
+                state.pause_event.clear()
+                
+        await state.pause_event.wait()
+
+    def is_cancelled(self, job_id: str) -> bool:
+        state = self._get_runtime_state(job_id)
+        return state.cancel_flag
+
+# ─── Serialisation helpers (Public API for FastAPI) ──────────────────────────
+
+def job_to_dict(job: BenchmarkJob) -> dict:
     return {
         "job_id": job.job_id,
         "models": job.models,
@@ -225,39 +274,10 @@ def _serialise_job(job: BenchmarkJob) -> dict:
             "models_done": job.progress.models_done,
             "total_models": job.progress.total_models,
             "current_tokens_per_second": job.progress.current_tokens_per_second,
+            "overall_percent": job.progress.overall_percent,
         },
         "results": [asdict(r) for r in job.results],
     }
-
-
-def _deserialise_job(data: dict) -> BenchmarkJob:
-    results = [QuestionResult(**r) for r in data.get("results", [])]
-    prog_data = data.get("progress", {})
-    progress = JobProgress(
-        current_model=prog_data.get("current_model", ""),
-        current_question_idx=prog_data.get("current_question_idx", 0),
-        total_questions_per_model=prog_data.get("total_questions_per_model", 0),
-        models_done=prog_data.get("models_done", 0),
-        total_models=prog_data.get("total_models", 0),
-        current_tokens_per_second=prog_data.get("current_tokens_per_second", 0.0),
-    )
-    return BenchmarkJob(
-        job_id=data["job_id"],
-        models=data.get("models", []),
-        suite=data.get("suite", ""),
-        status=data.get("status", "done"),
-        results=results,
-        progress=progress,
-        error_message=data.get("error_message"),
-        created_at=data.get("created_at", ""),
-        completed_at=data.get("completed_at"),
-    )
-
-
-def job_to_dict(job: BenchmarkJob) -> dict:
-    """Public serialisation used by FastAPI responses."""
-    return _serialise_job(job)
-
 
 # ─── Singleton ────────────────────────────────────────────────────────────────
 job_store = JobStore()

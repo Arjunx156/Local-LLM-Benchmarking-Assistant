@@ -9,7 +9,7 @@ import { Dashboard } from './components/Dashboard';
 import { FAQ, CTA, Footer } from './components/FooterSections';
 import './index.css';
 
-const API = 'https://rude-hoops-sleep.loca.lt';
+const API = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
 
 export default function App() {
   const [scrolled, setScrolled] = useState(false);

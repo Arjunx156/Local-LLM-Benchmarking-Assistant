@@ -12,11 +12,13 @@
   "dependencies": {
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
+    "@supabase/supabase-js": "^2.108.2",
     "framer-motion": "^12.40.0",
     "lucide-react": "^1.20.0",
     "maath": "^0.10.8",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "react-hot-toast": "^2.6.0",
     "recharts": "^3.8.1",
     "three": "^0.184.0"
   },

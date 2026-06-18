@@ -30,7 +30,11 @@ class Settings(BaseSettings):
     # Streamlit calls the backend at this URL
     BACKEND_URL: str = "http://localhost:8000"
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    # Supabase (Database)
+    SUPABASE_URL: str = ""
+    SUPABASE_KEY: str = ""
+
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
 
 settings = Settings()
