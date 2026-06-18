@@ -5,7 +5,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://rude-hoops-sleep.loca.lt/:path*"
+      "destination": "https://hungry-dingo-100.loca.lt/:path*"
     },
     {
       "source": "/(.*)",
