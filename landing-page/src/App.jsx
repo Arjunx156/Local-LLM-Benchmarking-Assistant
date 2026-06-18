@@ -9,7 +9,11 @@ import { Dashboard } from './components/Dashboard';
 import { FAQ, CTA, Footer } from './components/FooterSections';
 import './index.css';
 
-const API = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+// When deployed to Vercel, requests go through /api proxy (vercel.json rewrites)
+// When running locally, fall back to direct localhost
+const IS_PROD = import.meta.env.PROD;
+const API = IS_PROD ? '' : (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000');
+const API_PREFIX = IS_PROD ? '/api' : API;
 
 export default function App() {
   const [scrolled, setScrolled] = useState(false);
@@ -23,7 +27,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    fetch(`${API}/models`)
+    fetch(`${API_PREFIX}/models`)
       .then(r => r.json())
       .then(d => setModelCount(d.models?.length || 0))
       .catch(console.error);
@@ -53,7 +57,7 @@ export default function App() {
       <Features fade={fade} />
       <HowItWorks fade={fade} />
       <TerminalBlock fade={fade} />
-      <Dashboard fade={fade} API={API} />
+      <Dashboard fade={fade} API={API_PREFIX} />
       <ComparisonTable fade={fade} />
       <FAQ fade={fade} />
       <CTA />

@@ -4,8 +4,20 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "https://rude-hoops-sleep.loca.lt/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/:path*",
+      "headers": [
+        { "key": "Bypass-Tunnel-Reminder", "value": "true" }
+      ]
     }
   ]
 }

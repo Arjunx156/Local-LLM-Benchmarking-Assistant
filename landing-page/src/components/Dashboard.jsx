@@ -28,11 +28,10 @@ export const Dashboard = ({ fade, API }) => {
   useEffect(() => {
     (async () => {
       try {
-        const headers = { 'Bypass-Tunnel-Reminder': 'true' };
         const [s, m, su] = await Promise.all([
-          fetch(`${API}/system`, { headers }), 
-          fetch(`${API}/models`, { headers }), 
-          fetch(`${API}/suites`, { headers })
+          fetch(`${API}/system`), 
+          fetch(`${API}/models`), 
+          fetch(`${API}/suites`)
         ]);
         if (s.ok) setSysInfo(await s.json());
         if (m.ok) { const d = await m.json(); setModels(d.models || []); if (d.models?.length) setSelModel(d.models[0].name); }
@@ -97,7 +96,7 @@ export const Dashboard = ({ fade, API }) => {
       // Trigger execution via local backend
       const r = await fetch(`${API}/benchmark/run`, { 
         method: 'POST', 
-        headers: { 'Content-Type': 'application/json', 'Bypass-Tunnel-Reminder': 'true' }, 
+        headers: { 'Content-Type': 'application/json' }, 
         body: JSON.stringify({ models: [selModel], suite: selSuite }) 
       });
       if (r.ok) { 
@@ -119,7 +118,7 @@ export const Dashboard = ({ fade, API }) => {
   const abort = async () => { 
     if (jobId) {
       toast.promise(
-        fetch(`${API}/benchmark/${jobId}/cancel`, { method: 'POST', headers: { 'Bypass-Tunnel-Reminder': 'true' } }),
+        fetch(`${API}/benchmark/${jobId}/cancel`, { method: 'POST' }),
         { loading: 'Aborting...', success: 'Benchmark aborted.', error: 'Failed to abort.' }
       ).catch(console.error); 
     }
