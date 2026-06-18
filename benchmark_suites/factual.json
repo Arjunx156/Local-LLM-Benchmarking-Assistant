@@ -1,0 +1,82 @@
+[
+  {
+    "id": "f001",
+    "category": "factual",
+    "difficulty": "easy",
+    "prompt": "What is the capital city of France? Answer with just the city name.",
+    "expected_answer": "paris",
+    "evaluation_method": "exact_match"
+  },
+  {
+    "id": "f002",
+    "category": "factual",
+    "difficulty": "easy",
+    "prompt": "How many sides does a hexagon have? Answer with just the number.",
+    "expected_answer": "6",
+    "evaluation_method": "exact_match"
+  },
+  {
+    "id": "f003",
+    "category": "factual",
+    "difficulty": "easy",
+    "prompt": "What is the chemical symbol for water? Answer with just the formula.",
+    "expected_answer": "h2o",
+    "evaluation_method": "exact_match"
+  },
+  {
+    "id": "f004",
+    "category": "factual",
+    "difficulty": "easy",
+    "prompt": "What year did World War II end? Answer with just the year.",
+    "expected_answer": "1945",
+    "evaluation_method": "exact_match"
+  },
+  {
+    "id": "f005",
+    "category": "factual",
+    "difficulty": "medium",
+    "prompt": "What is the speed of light in a vacuum in meters per second? Answer with just the number.",
+    "expected_answer": "299792458",
+    "evaluation_method": "exact_match"
+  },
+  {
+    "id": "f006",
+    "category": "factual",
+    "difficulty": "medium",
+    "prompt": "Who wrote the play 'Romeo and Juliet'? Answer with just the author's name.",
+    "expected_answer": "william shakespeare",
+    "evaluation_method": "exact_match"
+  },
+  {
+    "id": "f007",
+    "category": "factual",
+    "difficulty": "medium",
+    "prompt": "What is the largest planet in our solar system? Answer with just the planet name.",
+    "expected_answer": "jupiter",
+    "evaluation_method": "exact_match"
+  },
+  {
+    "id": "f008",
+    "category": "factual",
+    "difficulty": "medium",
+    "prompt": "What is the atomic number of carbon? Answer with just the number.",
+    "expected_answer": "6",
+    "evaluation_method": "exact_match"
+  },
+  {
+    "id": "f009",
+    "category": "factual",
+    "difficulty": "hard",
+    "prompt": "What is Avogadro's number to the nearest integer power of 10? Answer in scientific notation format like: 6.022e23",
+    "expected_answer": "6.022e23",
+    "evaluation_method": "exact_match"
+  },
+  {
+    "id": "f010",
+    "category": "factual",
+    "difficulty": "hard",
+    "prompt": "What programming language was created by Guido van Rossum and first released in 1991? Answer with just the language name.",
+    "expected_answer": "python",
+    "evaluation_method": "exact_match"
+  }
+]

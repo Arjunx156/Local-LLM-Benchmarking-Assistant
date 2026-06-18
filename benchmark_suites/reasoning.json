@@ -1,0 +1,82 @@
+[
+  {
+    "id": "r001",
+    "category": "reasoning",
+    "difficulty": "easy",
+    "prompt": "A train travels from City A to City B at a constant speed of 60 mph. The total distance is 180 miles. How many hours does the trip take? Answer with just the number.",
+    "expected_answer": "3",
+    "evaluation_method": "exact_match"
+  },
+  {
+    "id": "r002",
+    "category": "reasoning",
+    "difficulty": "easy",
+    "prompt": "If you have 3 apples and take away 2, how many apples do YOU have? Answer with just the number.",
+    "expected_answer": "2",
+    "evaluation_method": "exact_match"
+  },
+  {
+    "id": "r003",
+    "category": "reasoning",
+    "difficulty": "easy",
+    "prompt": "All mammals are warm-blooded. Dolphins are mammals. Are dolphins warm-blooded? Answer with only: Yes or No.",
+    "expected_answer": "yes",
+    "evaluation_method": "exact_match"
+  },
+  {
+    "id": "r004",
+    "category": "reasoning",
+    "difficulty": "medium",
+    "prompt": "What comes next in this sequence: 2, 6, 12, 20, 30, ? Answer with just the number.",
+    "expected_answer": "42",
+    "evaluation_method": "exact_match"
+  },
+  {
+    "id": "r005",
+    "category": "reasoning",
+    "difficulty": "medium",
+    "prompt": "A bat and a ball cost $1.10 in total. The bat costs exactly $1.00 more than the ball. How many cents does the ball cost? Answer with just the number of cents.",
+    "expected_answer": "5",
+    "evaluation_method": "exact_match"
+  },
+  {
+    "id": "r006",
+    "category": "reasoning",
+    "difficulty": "medium",
+    "prompt": "A farmer has 17 sheep. All but 9 die. How many sheep are left? Answer with just the number.",
+    "expected_answer": "9",
+    "evaluation_method": "exact_match"
+  },
+  {
+    "id": "r007",
+    "category": "reasoning",
+    "difficulty": "medium",
+    "prompt": "If today is Wednesday and you schedule a meeting in exactly 10 days, what day of the week will the meeting be on? Answer with just the day name.",
+    "expected_answer": "saturday",
+    "evaluation_method": "exact_match"
+  },
+  {
+    "id": "r008",
+    "category": "reasoning",
+    "difficulty": "hard",
+    "prompt": "You have two ropes. Each rope takes exactly 60 minutes to burn completely from end to end, but they burn at an uneven rate (not constant speed). You have a lighter. Using only these two ropes and the lighter, how can you measure exactly 45 minutes? Describe the exact steps you would take.",
+    "expected_answer": "Light both ends of rope 1 and one end of rope 2 at the same time. When rope 1 is completely burned (30 minutes have passed), immediately light the other end of rope 2. When rope 2 finishes burning, exactly 45 minutes have elapsed.",
+    "evaluation_method": "llm_judge"
+  },
+  {
+    "id": "r009",
+    "category": "reasoning",
+    "difficulty": "hard",
+    "prompt": "There are 3 boxes. One is labeled APPLES, one is labeled ORANGES, and one is labeled APPLES & ORANGES. ALL THREE LABELS ARE WRONG. You may pick exactly one fruit from exactly one box to identify the contents of all three boxes. Which box do you pick from, and why? Explain your full reasoning.",
+    "expected_answer": "Pick one fruit from the box labeled APPLES & ORANGES. Since all labels are wrong, this box cannot contain a mix, so it must contain either only apples or only oranges. If you pick an apple, that box is APPLES. The box labeled APPLES cannot be apples (wrong label) and cannot be mixed (that's taken), so it must be ORANGES. The box labeled ORANGES must be APPLES & ORANGES. The logic reverses if you pick an orange.",
+    "evaluation_method": "llm_judge"
+  },
+  {
+    "id": "r010",
+    "category": "reasoning",
+    "difficulty": "hard",
+    "prompt": "In a room are three light switches, each controlling one of three bulbs in a closed room. You can only enter the room once. How can you determine which switch controls which bulb? Describe your approach.",
+    "expected_answer": "Turn switch 1 on for 10 minutes, then turn it off. Turn switch 2 on. Enter the room. The bulb that is on is controlled by switch 2. The bulb that is warm but off is controlled by switch 1. The bulb that is cold and off is controlled by switch 3.",
+    "evaluation_method": "llm_judge"
+  }
+]

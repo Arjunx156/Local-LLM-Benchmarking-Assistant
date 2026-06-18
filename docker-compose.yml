@@ -1,0 +1,35 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - OLLAMA_HOST=http://host.docker.internal:11434
+      - JUDGE_MODEL=tinyllama
+      - MAX_CONCURRENT_QUESTIONS=3
+      - CODE_EXEC_TIMEOUT_SEC=10
+      - BACKEND_URL=http://localhost:8000
+    volumes:
+      - ./reports:/app/reports
+      - ./benchmark_suites:/app/benchmark_suites
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "8501:8501"
+    environment:
+      - BACKEND_URL=http://backend:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped

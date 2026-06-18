@@ -1,0 +1,82 @@
+[
+  {
+    "id": "s001",
+    "category": "summarization",
+    "difficulty": "easy",
+    "prompt": "Summarize the following text in 3 to 5 bullet points, capturing the most important ideas:\n\nThe Internet of Things (IoT) refers to the network of physical objects embedded with sensors, software, and other technologies to connect and exchange data with other devices and systems over the internet. These devices range from ordinary household items like smart thermostats and refrigerators to sophisticated industrial tools. By 2025, it is estimated that over 75 billion devices will be connected globally. IoT enables greater automation, better data collection, and improved efficiency across industries such as healthcare, agriculture, manufacturing, and transportation. In healthcare, IoT devices can monitor patient vitals remotely, reducing hospital visits. In agriculture, smart sensors monitor soil conditions to optimize irrigation. Despite these benefits, IoT raises significant concerns about privacy and data security, as more connected devices create more potential entry points for cybercriminals.",
+    "expected_answer": "IoT connects physical devices via the internet for data exchange. Device count expected to exceed 75 billion by 2025. Applications span healthcare, agriculture, manufacturing, and transportation. Benefits include automation, efficiency, and remote monitoring. Major concerns include privacy and cybersecurity risks.",
+    "evaluation_method": "llm_judge"
+  },
+  {
+    "id": "s002",
+    "category": "summarization",
+    "difficulty": "easy",
+    "prompt": "Summarize the following text in 3 to 5 bullet points:\n\nClimate change refers to long-term shifts in global temperatures and weather patterns. While some climate change is natural, human activities since the industrial revolution — primarily the burning of fossil fuels — have been the main driver. This has increased concentrations of greenhouse gases like carbon dioxide and methane in the atmosphere, trapping heat. Consequences include rising sea levels, more frequent extreme weather events, melting glaciers, and disruption of ecosystems. Scientists warn that without significant reduction in emissions, global temperatures could rise by 2–4°C by the end of this century, causing irreversible damage. International agreements like the Paris Agreement aim to limit warming to 1.5°C above pre-industrial levels.",
+    "expected_answer": "Climate change is largely driven by human fossil fuel use since industrialization. Greenhouse gases trap heat, raising global temperatures. Consequences include sea level rise, extreme weather, and ecosystem disruption. Temperatures may rise 2-4 degrees C by century's end without action. The Paris Agreement aims to limit warming to 1.5 degrees C.",
+    "evaluation_method": "llm_judge"
+  },
+  {
+    "id": "s003",
+    "category": "summarization",
+    "difficulty": "medium",
+    "prompt": "Summarize the following text in 3 to 5 bullet points:\n\nBlockchain technology is a distributed ledger system that records transactions across many computers so that the record cannot be altered retroactively without altering all subsequent blocks and the consensus of the network. Originally invented for Bitcoin, blockchain has expanded far beyond cryptocurrency. In supply chain management, it provides transparency by tracking goods from origin to consumer. In healthcare, it secures patient records and ensures data integrity across providers. Smart contracts — self-executing contracts with terms written in code — automate processes like insurance claims and real estate transactions without intermediaries. Despite its potential, blockchain faces scalability challenges, high energy consumption (in proof-of-work systems), regulatory uncertainty, and a steep learning curve for adoption.",
+    "expected_answer": "Blockchain is a tamper-resistant distributed ledger technology. Originally created for Bitcoin but now used across many industries. Applications include supply chain tracking, healthcare records, and smart contracts. Smart contracts automate transactions without intermediaries. Challenges include scalability, energy use, and regulatory uncertainty.",
+    "evaluation_method": "llm_judge"
+  },
+  {
+    "id": "s004",
+    "category": "summarization",
+    "difficulty": "medium",
+    "prompt": "Summarize the following text in 3 to 5 bullet points:\n\nArtificial intelligence (AI) is transforming the global job market in profound ways. While AI automates repetitive and routine tasks — potentially displacing millions of workers in manufacturing, data entry, and customer service — it also creates new categories of jobs in AI development, data science, and machine learning operations. The World Economic Forum estimates that AI will displace 85 million jobs but create 97 million new roles by 2025. The key challenge is the skills gap: workers displaced by automation often lack the technical skills required for new AI-driven roles. This has spurred investment in reskilling programs by governments and corporations. The impact is uneven across demographics, with lower-income workers and those in developing economies being disproportionately affected.",
+    "expected_answer": "AI automates routine tasks, potentially displacing millions of workers. It also creates new jobs in tech, data science, and AI development. Net job creation is projected positive: 97M new vs 85M displaced by 2025. A major skills gap exists between displaced workers and new AI-focused roles. Impact is uneven, hitting lower-income workers and developing economies hardest.",
+    "evaluation_method": "llm_judge"
+  },
+  {
+    "id": "s005",
+    "category": "summarization",
+    "difficulty": "medium",
+    "prompt": "Summarize the following text in 3 to 5 bullet points:\n\nQuantum computing leverages quantum mechanical phenomena like superposition and entanglement to perform computations that would be practically impossible for classical computers. While a classical bit is either 0 or 1, a quantum bit (qubit) can exist in a superposition of both states simultaneously. This allows quantum computers to evaluate many possible solutions at once. Companies like IBM, Google, and startups such as IonQ and Rigetti are racing to build practical quantum computers. Google's Sycamore processor claimed quantum supremacy in 2019 by completing a task in 200 seconds that would take classical supercomputers 10,000 years. Key applications include cryptography (breaking and building encryption), drug discovery, materials science, and optimization problems in logistics. However, qubits are extremely fragile and error-prone, requiring temperatures near absolute zero to maintain coherence.",
+    "expected_answer": "Quantum computers use qubits in superposition to evaluate many solutions simultaneously. Major players include IBM, Google, IonQ, and Rigetti. Google claimed quantum supremacy in 2019 with its Sycamore processor. Key applications are cryptography, drug discovery, materials science, and logistics optimization. Current challenges include qubit fragility and the need for near-absolute-zero temperatures.",
+    "evaluation_method": "llm_judge"
+  },
+  {
+    "id": "s006",
+    "category": "summarization",
+    "difficulty": "hard",
+    "prompt": "Summarize the following text in 3 to 5 bullet points:\n\nThe microbiome — the vast community of trillions of microorganisms living in and on the human body — has emerged as a frontier in medical science. The gut microbiome in particular is now understood to play roles far beyond digestion, influencing the immune system, mental health (via the gut-brain axis), metabolic function, and even responses to cancer immunotherapy. Research has shown that the composition of gut bacteria differs significantly between healthy individuals and those with conditions such as obesity, depression, Type 2 diabetes, and autoimmune diseases. Fecal microbiota transplantation (FMT), where stool from a healthy donor is transferred to a patient, has shown remarkable success in treating recurrent Clostridioides difficile infections and is being investigated for IBD, autism, and neurological conditions. Diet is the most powerful modulator of the microbiome; high-fiber, plant-rich diets promote microbial diversity, while ultra-processed food diets reduce it. The field faces challenges: microbiome composition varies enormously between individuals, making personalized interventions difficult, and establishing causality versus correlation remains a major scientific hurdle.",
+    "expected_answer": "The gut microbiome influences immunity, mental health, metabolism, and cancer treatment response. Dysbiosis (disrupted microbiome) is linked to obesity, depression, diabetes, and autoimmune disease. FMT shows strong results for C. difficile and is being researched for other conditions. Diet is the primary microbiome modulator, with fiber-rich diets promoting diversity. Key scientific challenges include individual variability and establishing causality.",
+    "evaluation_method": "llm_judge"
+  },
+  {
+    "id": "s007",
+    "category": "summarization",
+    "difficulty": "hard",
+    "prompt": "Summarize the following text in 3 to 5 bullet points:\n\nLarge language models (LLMs) like GPT-4, Claude, and Gemini represent a significant leap in natural language processing. These models are trained on massive corpora of text using a transformer architecture and self-supervised learning, enabling them to perform remarkably well on tasks like question answering, code generation, and creative writing without task-specific training. However, they exhibit a range of well-documented failure modes: hallucination (generating plausible but false information), sensitivity to prompt phrasing, difficulty with multi-step mathematical reasoning, and an inability to access real-time information. Alignment is a central concern: ensuring LLMs behave safely and in accordance with human values requires techniques like reinforcement learning from human feedback (RLHF). The computational and financial cost of training frontier models is enormous — estimated at tens to hundreds of millions of dollars — creating concentration of capability among a handful of well-funded organizations. Open-source alternatives like Mistral, Llama, and Falcon challenge this concentration by making capable models accessible for local deployment.",
+    "expected_answer": "LLMs use transformer architecture with self-supervised learning to handle diverse NLP tasks. Known failure modes include hallucination, reasoning gaps, and prompt sensitivity. Alignment via RLHF is critical to making LLMs safe and value-aligned. Training frontier models costs tens to hundreds of millions of dollars. Open-source models like Llama and Mistral democratize access to capable LLMs.",
+    "evaluation_method": "llm_judge"
+  },
+  {
+    "id": "s008",
+    "category": "summarization",
+    "difficulty": "easy",
+    "prompt": "Summarize the following text in 3 to 5 bullet points:\n\nSolar energy is the conversion of sunlight into electricity using photovoltaic (PV) cells or concentrated solar power (CSP) systems. It is one of the fastest-growing renewable energy sources globally. The cost of solar panels has fallen over 90% in the last decade, making it the cheapest source of electricity in history in many regions. China leads global solar manufacturing and capacity, followed by the United States, India, and Germany. Solar is intermittent — it only generates power when the sun shines — so battery storage (like Tesla Megapack) and grid improvements are critical for reliability. Rooftop solar and utility-scale solar farms both play important roles in the energy mix, and many countries are aggressively expanding capacity to meet climate targets.",
+    "expected_answer": "Solar energy converts sunlight to electricity via PV cells or CSP. Solar panel costs have dropped over 90% in the last decade, making it the cheapest electricity source in many regions. China leads global solar capacity, followed by the US, India, and Germany. Intermittency requires battery storage and grid improvements. Both rooftop and utility-scale solar contribute to national energy mixes.",
+    "evaluation_method": "llm_judge"
+  },
+  {
+    "id": "s009",
+    "category": "summarization",
+    "difficulty": "medium",
+    "prompt": "Summarize the following text in 3 to 5 bullet points:\n\nCRISPR-Cas9 is a revolutionary gene-editing technology that allows scientists to precisely edit DNA sequences in living organisms. Derived from a natural bacterial immune defense mechanism, it uses a guide RNA to direct the Cas9 protein — which acts like molecular scissors — to a specific location in the genome, where it cuts and allows modifications. CRISPR has accelerated research into genetic diseases and has led to the first FDA-approved CRISPR therapy (Casgevy, approved in 2023 for sickle cell disease and beta-thalassemia). Beyond medicine, CRISPR is being used to develop disease-resistant crops, control invasive species via gene drives, and create biofuels. Ethical debates surround germline editing (modifying heritable DNA in embryos), as any changes would be passed to future generations, raising concerns about designer babies and genetic inequality. Regulatory frameworks globally are still catching up to the pace of CRISPR's capabilities.",
+    "expected_answer": "CRISPR-Cas9 is a precise gene-editing tool derived from bacterial immune systems. The first FDA-approved CRISPR therapy (Casgevy) treats sickle cell disease and beta-thalassemia. Applications extend to agriculture, invasive species control, and biofuels. Ethical concerns center on germline editing and heritable genetic changes. Global regulation has not kept pace with CRISPR's rapid development.",
+    "evaluation_method": "llm_judge"
+  },
+  {
+    "id": "s010",
+    "category": "summarization",
+    "difficulty": "hard",
+    "prompt": "Summarize the following text in 3 to 5 bullet points:\n\nUrbanization is accelerating globally, with the United Nations projecting that 68% of the world's population will live in urban areas by 2050, up from 55% in 2018. This rapid growth presents both opportunities and severe challenges. On the opportunity side, cities are engines of economic productivity — urban workers are on average 50% more productive than rural ones — and concentrated populations make it cheaper to deliver infrastructure, healthcare, and education. However, rapid unplanned urbanization leads to the proliferation of informal settlements (slums), overburdened infrastructure, worsening air and water quality, and increased urban heat island effects. Climate change compounds these challenges: sea-level rise threatens coastal cities, and extreme heat events disproportionately affect dense urban areas. The concept of the 'smart city' — using sensors, data, and AI to optimize urban services — is gaining traction, but deployment remains uneven between wealthy and developing nations. Inclusive urban planning that prioritizes affordable housing, transit, and green space is essential for making cities livable for all residents.",
+    "expected_answer": "68% of the global population will live in cities by 2050, up from 55% today. Cities boost economic productivity but rapid growth leads to slums and overburdened infrastructure. Climate change amplifies urban risks including coastal flooding and heat events. Smart city initiatives use AI and sensors but are unevenly deployed across wealth levels. Inclusive planning with affordable housing and green space is critical for equitable urban futures.",
+    "evaluation_method": "llm_judge"
+  }
+]
