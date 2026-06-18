@@ -5,7 +5,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://hungry-dingo-100.loca.lt/:path*"
+      "destination": "https://llm-bench-arjun.loca.lt/:path*"
     },
     {
       "source": "/(.*)",
